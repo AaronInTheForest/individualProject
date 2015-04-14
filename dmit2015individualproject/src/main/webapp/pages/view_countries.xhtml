@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/page_template.xhtml">
+	
+	<ui:param name="title" value="Human Resources - Countries" />
+	
+	<ui:define name="content">
+		<h1>Countries</h1>
+		<h:form id="country_form">
+			<p:messages id="messages"/>		
+		
+			<p:dataTable id="countries" var="country" value="#{countryBean.countries}" paginator="true" rows="10" paginatorPosition="bottom" 
+			filteredValue="#{countryBean.filteredCountries}">
+				<f:facet name="header">
+					<h:outputText value="Countries" />
+				</f:facet>
+				<p:column headerText="Country ID">
+					<h:outputText value="#{country.id}" />
+				</p:column>
+				<p:column headerText="Country Name" sortBy="#{country.name}">
+					<h:outputText value="#{country.name}" />
+				</p:column>
+				<p:column headerText="Region" sortBy="#{country.countryRegion.name}" 
+					filterBy="#{country.countryRegion.id}" filterOptions="#{regionBean.regionOptions}" >
+					<h:outputText value="#{country.countryRegion.name}" />
+				</p:column>
+			</p:dataTable>
+						
+		</h:form>		
+	</ui:define>
+</ui:composition>

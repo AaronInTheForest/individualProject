@@ -1,0 +1,45 @@
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/page_template.xhtml">
+	
+	<ui:param name="title" value="Human Resources - Job History" />
+	
+	<ui:define name="content">
+		<h1>Job History</h1>
+		<h:form id="job_history_form">
+			<p:messages id="messages"/>		
+		
+			<p:dataTable id="job_histories" var="jobHistory" value="#{jobHistoryBean.jobHistories}" paginator="true" rows="10" paginatorPosition="bottom">
+				<f:facet name="header">
+					<h:outputText value="Job History" />
+				</f:facet>
+				<p:column headerText="Employee Name (last, first)" sortBy="#{jobHistory.jobHistoryEmployee.lastName}">
+					<h:outputText value="#{jobHistory.jobHistoryEmployee.lastName}, #{jobHistory.jobHistoryEmployee.firstName}" />
+				</p:column>
+				<p:column headerText="Start Date (MMM-dd-yyyy)" sortBy="#{jobHistory.startDate}">
+					<h:outputText value="#{jobHistory.startDate}">
+						<f:convertDateTime pattern="MMM dd, yyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="End Date (MMM-dd-yyyy)" sortBy="#{jobHistory.endDate}">
+					<h:outputText value="#{jobHistory.endDate}">
+						<f:convertDateTime pattern="MMM dd, yyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Job Title" sortBy="#{jobHistory.jobHistoryJob.title}" >
+					<h:outputText value="#{jobHistory.jobHistoryJob.title}" />
+				</p:column>
+				<p:column headerText="Department" sortBy="#{jobHistory.jobHistoryDepartment.name}">
+					<h:outputText value="#{jobHistory.jobHistoryDepartment.name}" />
+				</p:column>
+			</p:dataTable>
+						
+		</h:form>		
+	</ui:define>
+</ui:composition>

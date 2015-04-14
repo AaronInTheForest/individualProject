@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/page_template.xhtml">
+	
+	<ui:param name="title" value="Human Resources - Departments" />
+	
+	<ui:define name="content">
+		<h1>Departments</h1>
+		<h:form id="department_form">
+			<p:messages id="messages"/>				
+
+			<p:dataTable id="departments" var="department" value="#{departmentBean.departments}" paginator="true" rows="10" paginatorPosition="bottom">
+				<f:facet name="header">
+					<h:outputText value="Departments" />
+				</f:facet>	
+				<p:column headerText="Department Name" sortBy="#{department.name}">
+					<h:outputText value="#{department.name}" />
+				</p:column>
+				<p:column headerText="Manager" sortBy="#{department.departmentManager.lastName}">
+					<h:outputText value="#{department.departmentManager.lastName}, #{department.departmentManager.firstName}" 
+					rendered="#{not empty department.departmentManager.lastName}"/>
+				</p:column>
+				<p:column headerText="Location (city, state/province, country)">
+					<h:outputText value="#{department.departmentLocation.city}, #{department.departmentLocation.stateProvince}, #{department.departmentLocation.locationCountry.name}" />
+				</p:column>
+			</p:dataTable>
+		
+		</h:form>		
+	</ui:define>
+</ui:composition>

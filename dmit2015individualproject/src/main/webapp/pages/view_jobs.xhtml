@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/page_template.xhtml">
+	
+	<ui:param name="title" value="Human Resources - Jobs" />
+	
+	<ui:define name="content">
+		<h1>Jobs</h1>
+		<h:form id="job_form">
+			<p:messages id="messages"/>		
+		
+			<p:dataTable id="jobs" var="job" value="#{jobBean.jobs}" paginator="true" rows="10" paginatorPosition="bottom">
+				<f:facet name="header">
+					<h:outputText value="Jobs" />
+				</f:facet>
+				<p:column headerText="Job ID" sortBy="#{job.id}">
+					<h:outputText value="#{job.id}" />
+				</p:column>
+				<p:column headerText="Job Title" sortBy="#{job.title}">
+					<h:outputText value="#{job.title}" />
+				</p:column>
+				<p:column headerText="Minimum Salary" sortBy="#{job.minimumSalary}" style="text-align:right">
+					<h:outputText value="#{job.minimumSalary}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Maximum Salary" sortBy="#{job.maximumSalary}" style="text-align:right">
+					<h:outputText value="#{job.maximumSalary}">
+						<f:convertNumber type="currency" />
+					</h:outputText>
+				</p:column>
+			</p:dataTable>
+						
+		</h:form>		
+	</ui:define>
+</ui:composition>

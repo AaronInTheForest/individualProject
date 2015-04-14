@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/page_template.xhtml">
+	
+	<ui:param name="title" value="Human Resources - Locations" />
+	
+	<ui:define name="content">
+		<h1>Locations</h1>
+		<h:form id="location_form">
+			<p:messages id="messages"/>		
+		
+			<p:dataTable id="locations" var="location" value="#{locationBean.locations}" paginator="true" rows="10" paginatorPosition="bottom"
+			filteredValue="#{locationBean.filteredLocations}">
+				<f:facet name="header">
+					<h:outputText value="Locations" />
+				</f:facet>	
+				<p:column headerText="Location ID">
+					<h:outputText value="#{location.id}" />
+				</p:column>
+				<p:column headerText="Street Address">
+					<h:outputText value="#{location.streetAddress}" />
+				</p:column>
+				<p:column headerText="Postal Code">
+					<h:outputText value="#{location.postalCode}" />
+				</p:column>
+				<p:column headerText="City" sortBy="#{location.city}">
+					<h:outputText value="#{location.city}" />
+				</p:column>
+				<p:column headerText="State/Province" sortBy="#{location.stateProvince}">
+					<h:outputText value="#{location.stateProvince}" />
+				</p:column>			
+				<p:column headerText="Country" sortBy="#{location.locationCountry.name}"
+				filterBy="#{location.locationCountry.id}" filterOptions="#{countryBean.countryOptions}">
+					<h:outputText value="#{location.locationCountry.name}" />
+				</p:column>	
+			</p:dataTable>
+						
+		</h:form>		
+	</ui:define>
+</ui:composition>
