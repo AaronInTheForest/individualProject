@@ -41,9 +41,11 @@ public class EmployeeController implements Serializable {
 	private List<Employee> employees;
 	private List<Employee> filteredEmployees;
 	@NotNull(message="Please select the Job for the Employee.")
-	private Short selectedJobId = null;
+	private String selectedJobId = null;
 	@NotNull(message="Please select the Department for the Employee.")
-	private Short selectedDepartmentId = null;
+	private int selectedDepartmentId;
+	@NotNull(message="Please select the Manager for the Employee.")
+	private int selectedManagerId;
 	public EmployeeController() {
 		super();
 	}
@@ -60,19 +62,23 @@ public class EmployeeController implements Serializable {
 		try{
 			Department employeeDepartment = departmentService.findById(selectedDepartmentId);
 			currentEmployee.setEmployeeDepartment(employeeDepartment);
-			//Manager employeeManager = managerService.findById(selectedManagerId);
-			//currentEmployee.setEmployeeManager(employeeManager);
+			Employee employeeManager = employeeService.findById(selectedManagerId);
+			currentEmployee.setEmployeeManager(employeeManager);
 			Job employeeJob = jobService.findById(selectedJobId);
 			currentEmployee.setEmployeeJob(employeeJob);
-			
-			employeeService.createEmployee(currentEmployee);
-			JSFUtil.addInfoMessage(currentEmployee.toString());
-			RequestContext context = RequestContext.getCurrentInstance();
-			context.addCallbackParam("success", true);
-			currentEmployee = new Employee();//may want to set this to null as per instructions Assign15.5
+			if(currentEmployee.getSalary().compareTo(currentEmployee.getEmployeeJob().getMinimumSalary()) >= 0 && currentEmployee.getSalary().compareTo(currentEmployee.getEmployeeJob().getMaximumSalary()) <= 0){				
+				employeeService.createEmployee(currentEmployee);
+				JSFUtil.addInfoMessage(currentEmployee.toString());
+				RequestContext context = RequestContext.getCurrentInstance();
+				context.addCallbackParam("success", true);
+				currentEmployee = new Employee();//may want to set this to null as per instructions Assign15.5
+			}else{
+				JSFUtil.addErrorMessage("Add employee failed: Salary is not within acceptable range for that Job Title.");
+			}
 		}catch(Exception e){
 			JSFUtil.addErrorMessage("Add employee failed: " + e.getMessage());
 		}
+		
 	}
 	public List<Employee> getEmployees() {
 		return employees;
@@ -93,6 +99,31 @@ public class EmployeeController implements Serializable {
 	public void setCurrentEmployee(Employee currentEmployee) {
 		this.currentEmployee = currentEmployee;
 	}
+	
+	public String getSelectedJobId() {
+		return selectedJobId;
+	}
+
+	public void setSelectedJobId(String selectedJobId) {
+		this.selectedJobId = selectedJobId;
+	}
+
+	public int getSelectedDepartmentId() {
+		return selectedDepartmentId;
+	}
+
+	public void setSelectedDepartmentId(int selectedDepartmentId) {
+		this.selectedDepartmentId = selectedDepartmentId;
+	}
+
+	public int getSelectedManagerId() {
+		return selectedManagerId;
+	}
+
+	public void setSelectedManagerId(int selectedManagerId) {
+		this.selectedManagerId = selectedManagerId;
+	}
+
 	public List<SelectItem> getDepartmentOptions(){
 		List<SelectItem> departmentOptions = new ArrayList<SelectItem>();
 		try{
@@ -126,5 +157,22 @@ public class EmployeeController implements Serializable {
 			JSFUtil.addErrorMessage(e.getMessage());
 		}
 		return jobOptions;
+	}
+	public List<SelectItem> getManagerOptions(){
+		List<SelectItem> managerOptions = new ArrayList<SelectItem>();
+		try{
+			List<Employee> managers = employeeService.findAllManagers();
+			managerOptions.add(new SelectItem("", "[select a Manager]"));
+			managerOptions.add(new SelectItem("", "-------------------"));
+			for(Employee manager : managers){
+				SelectItem item = new SelectItem();
+				item.setValue(manager.getId());
+				item.setLabel(manager.getFirstName() + ' ' + manager.getLastName() + ", " + manager.getEmployeeJob().getTitle());
+				managerOptions.add(item);
+			}
+		}catch(Exception e){
+			JSFUtil.addErrorMessage(e.getMessage());
+		}
+		return managerOptions;
 	}
 }

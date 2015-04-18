@@ -22,7 +22,7 @@ public class Employee implements Serializable {
 	@Id
 	@Column(name="EMPLOYEE_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="EMPLOYEES_SEQ_GEN")
-	@SequenceGenerator(name="EMPLOYEES_SEQ_GEN",sequenceName="EMPLOYEES_SEQ")
+	@SequenceGenerator(name="EMPLOYEES_SEQ_GEN",sequenceName="EMPLOYEES_SEQ",allocationSize=1)
 	private int id;
 	
 	@Column(name="FIRST_NAME")

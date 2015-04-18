@@ -21,7 +21,7 @@ public class Location implements Serializable {
 	@Id
 	@Column(name="LOCATION_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="LOCATIONS_SEQ_GEN")
-	@SequenceGenerator(name="LOCATIONS_SEQ_GEN",sequenceName="LOCATIONS_SEQ")
+	@SequenceGenerator(name="LOCATIONS_SEQ_GEN",sequenceName="LOCATIONS_SEQ",allocationSize=1)
 	private int id;
 	
 	@Column(name="STREET_ADDRESS", length=40)

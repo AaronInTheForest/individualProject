@@ -20,7 +20,7 @@ public class Department implements Serializable {
 	@Id
 	@Column(name = "DEPARTMENT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DEPARTMENTS_SEQ_GEN")
-	@SequenceGenerator(name = "DEPARTMENTS_SEQ_GEN", sequenceName = "DEPARTMENTS_SEQ")
+	@SequenceGenerator(name = "DEPARTMENTS_SEQ_GEN", sequenceName = "DEPARTMENTS_SEQ",allocationSize=1)
 	private int id;
 
 	@Column(name = "DEPARTMENT_NAME")

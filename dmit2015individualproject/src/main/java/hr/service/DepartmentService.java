@@ -19,7 +19,7 @@ public class DepartmentService implements Serializable {
 	
 	@SuppressWarnings("unchecked")
 	public List<Department> findByLocation(Location location) {
-		return entityManager.createQuery("FROM Department d WHERE d.location = :locationValue")
+		return entityManager.createQuery("FROM Department d WHERE d.departmentLocation = :locationValue")
 				.setParameter("locationValue", location)
 				.getResultList();
 	}
@@ -28,7 +28,7 @@ public class DepartmentService implements Serializable {
 	public List<Department> findAll() {
 		return entityManager.createQuery("FROM Department d ORDER BY d.name").getResultList();
 	}
-	public Department findById(Short id){
+	public Department findById(int id){
 		return entityManager.find(Department.class, id);
 	}
 }

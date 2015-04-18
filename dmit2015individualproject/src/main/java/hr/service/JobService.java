@@ -18,7 +18,7 @@ public class JobService {
 	public List<Job> findAll() {
 		return entityManager.createQuery("from Job").getResultList();
 	}
-	public Job findById(Short id){
+	public Job findById(String id){
 		return entityManager.find(Job.class, id);
 	}
 }
