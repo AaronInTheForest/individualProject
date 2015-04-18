@@ -11,9 +11,9 @@
 	
 	<ui:define name="content">
 		<h1>Employees</h1>
+		<!-- SAM'S FORM BELOW -->
 		<h:form id="employee_form">
 			<p:messages id="messages"/>		
-			
 			<p:dataTable id="employees" var="employee" value="#{employeeBean.employees}" paginator="true" rows="10" paginatorPosition="bottom"
 				filteredValue="#{employeeBean.filteredEmployees}">
 				<f:facet name="header">

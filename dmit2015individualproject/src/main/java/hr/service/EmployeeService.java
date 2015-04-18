@@ -26,5 +26,7 @@ public class EmployeeService {
 	public List<Employee> findAll() {
 		return entityManager.createQuery("FROM Employee e ORDER BY e.lastName, e.firstName").getResultList();
 	}
-	
+	public void createEmployee(Employee employee){
+		entityManager.persist(employee);
+	}
 }

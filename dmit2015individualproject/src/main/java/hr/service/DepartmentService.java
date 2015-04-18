@@ -28,5 +28,7 @@ public class DepartmentService implements Serializable {
 	public List<Department> findAll() {
 		return entityManager.createQuery("FROM Department d ORDER BY d.name").getResultList();
 	}
-	
+	public Department findById(Short id){
+		return entityManager.find(Department.class, id);
+	}
 }
