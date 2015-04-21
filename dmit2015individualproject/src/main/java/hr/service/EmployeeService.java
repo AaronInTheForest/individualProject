@@ -35,10 +35,23 @@ public class EmployeeService {
 		return employee;
 	}
 	@SuppressWarnings("unchecked")
+	public Employee findByEmail(String email) {
+		Query query = entityManager.createQuery("FROM Employee e WHERE e.email = :emailValue ORDER BY e.lastName, e.firstName");
+		query.setParameter("emailValue", email);
+		Employee employee = (Employee) query.getSingleResult();
+		return employee;
+	}
+	@SuppressWarnings("unchecked")
 	public List<Employee> findAllManagers() {
 		return entityManager.createQuery("FROM Employee e WHERE job_Id IN ('FI_MGR','AC_MGR','SA_MAN','PU_MAN','ST_MAN','MK_MAN')  ORDER BY e.lastName, e.firstName").getResultList();
 	}
 	public void createEmployee(Employee employee){
 		entityManager.persist(employee);
+	}
+	public void removeEmployee(Employee employee){
+		entityManager.remove(entityManager.merge(employee));
+	}
+	public void updateEmployee(Employee employee){
+		entityManager.merge(employee);
 	}
 }

@@ -24,7 +24,6 @@ import hr.domain.Employee;
 import hr.domain.Job;
 import hr.domain.Location;
 
-
 @Named("employeeBean")
 @ViewScoped
 public class EmployeeController implements Serializable {
@@ -40,12 +39,14 @@ public class EmployeeController implements Serializable {
 	private Employee currentEmployee = new Employee();
 	private List<Employee> employees;
 	private List<Employee> filteredEmployees;
-	@NotNull(message="Please select the Job for the Employee.")
+	@NotNull(message = "Please select the Job for the Employee.")
 	private String selectedJobId = null;
-	@NotNull(message="Please select the Department for the Employee.")
+	@NotNull(message = "Please select the Department for the Employee.")
 	private int selectedDepartmentId;
-	@NotNull(message="Please select the Manager for the Employee.")
+	@NotNull(message = "Please select the Manager for the Employee.")
 	private int selectedManagerId;
+	private String searchTerm;
+
 	public EmployeeController() {
 		super();
 	}
@@ -54,32 +55,109 @@ public class EmployeeController implements Serializable {
 	public void init() {
 		try {
 			employees = employeeService.findAll();
-		} catch( Exception e) {
-			JSFUtil.addErrorMessage("Error retreiving employees: " + e.getMessage());
+		} catch (Exception e) {
+			JSFUtil.addErrorMessage("Error retreiving employees: "
+					+ e.getMessage());
 		}
 	}
-	public void addEmployee(){
-		try{
-			Department employeeDepartment = departmentService.findById(selectedDepartmentId);
+
+	public void addEmployee() {
+		try {
+			Department employeeDepartment = departmentService
+					.findById(selectedDepartmentId);
 			currentEmployee.setEmployeeDepartment(employeeDepartment);
-			Employee employeeManager = employeeService.findById(selectedManagerId);
+			Employee employeeManager = employeeService
+					.findById(selectedManagerId);
 			currentEmployee.setEmployeeManager(employeeManager);
 			Job employeeJob = jobService.findById(selectedJobId);
 			currentEmployee.setEmployeeJob(employeeJob);
-			if(currentEmployee.getSalary().compareTo(currentEmployee.getEmployeeJob().getMinimumSalary()) >= 0 && currentEmployee.getSalary().compareTo(currentEmployee.getEmployeeJob().getMaximumSalary()) <= 0){				
+			if (currentEmployee.getSalary().compareTo(
+					currentEmployee.getEmployeeJob().getMinimumSalary()) >= 0
+					&& currentEmployee.getSalary()
+							.compareTo(
+									currentEmployee.getEmployeeJob()
+											.getMaximumSalary()) <= 0) {
 				employeeService.createEmployee(currentEmployee);
 				JSFUtil.addInfoMessage(currentEmployee.toString());
 				RequestContext context = RequestContext.getCurrentInstance();
 				context.addCallbackParam("success", true);
-				currentEmployee = new Employee();//may want to set this to null as per instructions Assign15.5
-			}else{
+				currentEmployee = new Employee();// may want to set this to null
+													// as per instructions
+													// Assign15.5
+			} else {
 				JSFUtil.addErrorMessage("Add employee failed: Salary is not within acceptable range for that Job Title.");
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			JSFUtil.addErrorMessage("Add employee failed: " + e.getMessage());
 		}
-		
+
 	}
+	public void updateEmployee() {
+		try {
+			Department employeeDepartment = departmentService
+					.findById(selectedDepartmentId);
+			currentEmployee.setEmployeeDepartment(employeeDepartment);
+			Employee employeeManager = employeeService
+					.findById(selectedManagerId);
+			currentEmployee.setEmployeeManager(employeeManager);
+			Job employeeJob = jobService.findById(selectedJobId);
+			currentEmployee.setEmployeeJob(employeeJob);
+			if (currentEmployee.getSalary().compareTo(
+					currentEmployee.getEmployeeJob().getMinimumSalary()) >= 0
+					&& currentEmployee.getSalary()
+							.compareTo(
+									currentEmployee.getEmployeeJob()
+											.getMaximumSalary()) <= 0) {
+				employeeService.updateEmployee(currentEmployee);
+				JSFUtil.addInfoMessage(currentEmployee.toString() + " updated");/*
+				RequestContext context = RequestContext.getCurrentInstance();
+				context.addCallbackParam("success", true);*/
+				currentEmployee = new Employee();// may want to set this to null
+													// as per instructions
+													// Assign15.5
+			} else {
+				JSFUtil.addErrorMessage("Update employee failed: Salary is not within acceptable range for that Job Title.");
+			}
+		} catch (Exception e) {
+			JSFUtil.addErrorMessage("Update employee failed: " + e.getMessage());
+		}
+
+	}
+	public void deleteEmployee() {
+		try {
+				employeeService.removeEmployee(currentEmployee);
+				currentEmployee = new Employee();
+		} catch (Exception e) {
+			JSFUtil.addErrorMessage("Delete employee failed: " + e.getMessage());
+		}
+	}
+	public void cancel(){
+		currentEmployee = null;
+		setSelectedDepartmentId(0);
+		setSelectedJobId(null);
+		setSelectedManagerId(0);
+	}
+	public void search() {
+		Employee employee = null;
+		int id;
+		String email = null;
+		try {
+			id = Integer.parseInt(searchTerm);
+			employee = employeeService.findById(id);
+		} catch (NumberFormatException nfe) {
+			email = searchTerm;
+			employee = employeeService.findByEmail(email);
+		}
+		if(employee != null){
+			currentEmployee = employee;
+			setSelectedDepartmentId(employee.getEmployeeDepartment().getId());
+			setSelectedJobId(employee.getEmployeeJob().getId());
+			setSelectedManagerId(employee.getEmployeeManager().getId());
+		}else{
+			JSFUtil.addInfoMessage("No employee found.");
+		}
+	}
+
 	public List<Employee> getEmployees() {
 		return employees;
 	}
@@ -99,7 +177,7 @@ public class EmployeeController implements Serializable {
 	public void setCurrentEmployee(Employee currentEmployee) {
 		this.currentEmployee = currentEmployee;
 	}
-	
+
 	public String getSelectedJobId() {
 		return selectedJobId;
 	}
@@ -124,53 +202,65 @@ public class EmployeeController implements Serializable {
 		this.selectedManagerId = selectedManagerId;
 	}
 
-	public List<SelectItem> getDepartmentOptions(){
+	public String getSearchTerm() {
+		return searchTerm;
+	}
+
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
+
+	public List<SelectItem> getDepartmentOptions() {
 		List<SelectItem> departmentOptions = new ArrayList<SelectItem>();
-		try{
+		try {
 			List<Department> departments = departmentService.findAll();
 			departmentOptions.add(new SelectItem("", "[select a Department]"));
 			departmentOptions.add(new SelectItem("", "-------------------"));
-			for(Department department : departments){
+			for (Department department : departments) {
 				SelectItem item = new SelectItem();
 				item.setValue(department.getId());
 				item.setLabel(department.getName());
 				departmentOptions.add(item);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			JSFUtil.addErrorMessage(e.getMessage());
 		}
 		return departmentOptions;
 	}
-	public List<SelectItem> getJobOptions(){
+
+	public List<SelectItem> getJobOptions() {
 		List<SelectItem> jobOptions = new ArrayList<SelectItem>();
-		try{
+		try {
 			List<Job> jobs = jobService.findAll();
 			jobOptions.add(new SelectItem("", "[select a Job]"));
 			jobOptions.add(new SelectItem("", "-------------------"));
-			for(Job job : jobs){
+			for (Job job : jobs) {
 				SelectItem item = new SelectItem();
 				item.setValue(job.getId());
 				item.setLabel(job.getTitle());
 				jobOptions.add(item);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			JSFUtil.addErrorMessage(e.getMessage());
 		}
 		return jobOptions;
 	}
-	public List<SelectItem> getManagerOptions(){
+
+	public List<SelectItem> getManagerOptions() {
 		List<SelectItem> managerOptions = new ArrayList<SelectItem>();
-		try{
+		try {
 			List<Employee> managers = employeeService.findAllManagers();
 			managerOptions.add(new SelectItem("", "[select a Manager]"));
 			managerOptions.add(new SelectItem("", "-------------------"));
-			for(Employee manager : managers){
+			for (Employee manager : managers) {
 				SelectItem item = new SelectItem();
 				item.setValue(manager.getId());
-				item.setLabel(manager.getFirstName() + ' ' + manager.getLastName() + ", " + manager.getEmployeeJob().getTitle());
+				item.setLabel(manager.getFirstName() + ' '
+						+ manager.getLastName() + ", "
+						+ manager.getEmployeeJob().getTitle());
 				managerOptions.add(item);
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			JSFUtil.addErrorMessage(e.getMessage());
 		}
 		return managerOptions;
