@@ -18,5 +18,4 @@ public class RegionService {
 	public List<Region> findAll() {
 		return entityManager.createQuery("from Region r order by r.name").getResultList();
 	}
-	
 }
