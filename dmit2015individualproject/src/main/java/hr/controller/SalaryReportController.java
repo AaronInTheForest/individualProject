@@ -182,7 +182,37 @@ public class SalaryReportController implements Serializable{
 			JSFUtil.addErrorMessage("Error creating the bar chart with exception: " + e.getMessage());
 		}
 	}
-	
+	public void createJobTitleChartModel(){
+		logger.info("entering createJobTitleChartModel()");
+		//clear data
+		regionChartModel = null;
+		countryChartModel = null;
+		departmentChartModel = null;
+		regions = null;
+		countries = null;
+		locations = null; 
+		departments = null;
+		employees = null;
+		//create data for the BarChart
+		jobTitleChartModel = new HorizontalBarChartModel();
+		jobTitleChartModel.setTitle("Salary by Job");
+		ChartSeries jobSeries = new ChartSeries();
+		jobSeries.setLabel("Job Title");
+		try{
+			for(Job job : jobService.findAll()){
+				Query query = entityManager.createQuery("SELECT SUM(salary) FROM Employee WHERE job_id = :jobParam");
+				query.setParameter("jobParam", job.getId());
+				BigDecimal totalSalary = (BigDecimal) query.getSingleResult();				//do not include categories for which there are no expenses
+				if(totalSalary != null){
+					jobSeries.set(job.getTitle(), totalSalary);
+				}
+			}
+			jobTitleChartModel.addSeries(jobSeries);
+		}catch(Exception e){
+			jobTitleChartModel = null;
+			JSFUtil.addErrorMessage("Error creating the bar chart with exception: " + e.getMessage());
+		}
+	}
 	
 	//Getters and Setters
 	public PieChartModel getRegionChartModel() {
